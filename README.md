@@ -1,9 +1,12 @@
 # blender-stable-diffusion-render
 A Blender addon for using Stable Diffusion to render texture bakes for objects.
 
-It will maintain your existing UV coords and bake the result to them.
+![examples](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/8f22d031-5f5d-47e9-a0c2-dd9dde0a0a4c)
 
-Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen.
+
+It will retain your existing UV coords and bake the result to them.
+
+Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen. Only one object at a time (for now)
 
 Steps:
 
@@ -15,7 +18,7 @@ Steps:
 
 4. Set up a viewer node and render depth. Save result
 
-5. Set active camera as view
+5. Set active camera as view (Important to get correct projection)
 
 6. Select object and hit "Render" in the "Stable Diffusion Render" panel in the "Render" tab
 
