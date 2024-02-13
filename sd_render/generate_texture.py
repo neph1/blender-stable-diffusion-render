@@ -2,43 +2,39 @@ import bpy
 import io
 import sys
 import numpy as np
+import logging
 from sd_render.image_gen.automatic1111 import Automatic1111
-from sd_render.camera_utils import *
-from sd_render.image_utils import *
+from sd_render.camera_utils import render_viewport, project_uvs, project_uv_from_active_camera
+from sd_render.image_utils import bake_from_active, create_projector_object, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector
 
-def generate(obj):
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
+
+def generate(obj) -> str:
+    props = bpy.context.scene.sd_link_properties
     image_size = 512
     rendered_image = render_viewport(image_size)
     bytes = bytearray()
-    #for value in rendered_image.pixels:
-    #    bytes.append(int(max([0, min([255, value * 255])])))
-    #image_bytes = np.array(bytes, dtype=np.uint8)
-    
-    generator = Automatic1111()
+
+    generator = Automatic1111(address=props.sd_address, port=props.sd_port)
     depth_map = '/tmp/viewer_node.png'
-    props = bpy.context.scene.sd_link_properties
-    #generated_path = "/tmp/sd_output.png"  # Set the path to your texture image
+    
+    #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
-                                              negative_prompt=props.negative_prompt,
-                                              seed=props.seed,
-                                              sampler=props.sampler,
-                                              steps=props.steps,
-                                              cfg_scale=props.cfg_scale,
-                                              width=props.width,
-                                              height=props.height,
-                                              cn_weight=props.cn_weight,
-                                              cn_guidance=props.cn_guidance,
-                                              depth_map=depth_map)
-    if generated_path:
-        texture_image = bpy.data.images.load('/tmp/sd_output.png')
-    else:
-        print("Error: Generation failed.")
-    
-    project_from_view = False
-    
-    if project_from_view:
-        project_uvs(obj)
-    
+                                             negative_prompt=props.negative_prompt,
+                                             seed=props.seed,
+                                             sampler=props.sampler,
+                                             steps=props.steps,
+                                             cfg_scale=props.cfg_scale,
+                                             width=props.width,
+                                             height=props.height,
+                                             cn_weight=props.cn_weight,
+                                             cn_guidance=props.cn_guidance,
+                                             depth_map=depth_map)
+    texture_image = bpy.data.images.load('/tmp/sd_output.png')
+    if not texture_image:
+        return "Failed to generate texture."
     # bake_texture(obj, texture_image)
     
     target_object = obj
@@ -60,6 +56,6 @@ def generate(obj):
 def execute():
     if len(bpy.context.selected_objects) > 0:
         obj = bpy.context.selected_objects[0]
-        generate(obj)
+        return generate(obj)
     else:
-        print("Error: No object selected. Please select an object.")
+        return "No object selected. Please select an object."

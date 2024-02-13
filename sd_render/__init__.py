@@ -25,7 +25,7 @@ else:
 
 import bpy
 
-from . import generate_texture
+from sd_render import generate_texture
 
 from bpy.props import (StringProperty,
                        BoolProperty,
@@ -87,13 +87,23 @@ class StableDiffusionProperties(PropertyGroup):
     )
     cn_weight: FloatProperty(
         name="CN Weight",
-        description="Weight for content normalization",
+        description="Control net weight",
         default=0.7
     )
     cn_guidance: FloatProperty(
         name="CN Guidance",
-        description="Guidance for content normalization",
+        description="Control net guidance / strength",
         default=1
+    )
+    sd_address: StringProperty(
+        name="Address",
+        description="Address to SD backend",
+        default="127.0.0.1"
+    )
+    sd_port: StringProperty(
+        name="Port",
+        description="Port to SD backend",
+        default="7860"
     )
 
 class StableDiffusionRenderPanel(Panel):
@@ -119,6 +129,8 @@ class StableDiffusionRenderPanel(Panel):
         layout.prop(generate_image_properties, "height")
         layout.prop(generate_image_properties, "cn_weight")
         layout.prop(generate_image_properties, "cn_guidance")
+        layout.prop(generate_image_properties, "sd_address")
+        layout.prop(generate_image_properties, "sd_port")
         col = self.layout.column(align=True)
         col.operator(RenderButton_operator.bl_idname, text="Render")
 
@@ -127,7 +139,9 @@ class RenderButton_operator(bpy.types.Operator):
     bl_label = "Render"
 
     def execute(self, context):
-        generate_texture.execute()
+        result = generate_texture.execute()
+        if result:
+            self.report({'ERROR'}, result)
         return {'FINISHED'}
 
 def register():
