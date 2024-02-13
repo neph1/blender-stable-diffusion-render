@@ -105,6 +105,11 @@ class StableDiffusionProperties(PropertyGroup):
         description="Port to SD backend",
         default="7860"
     )
+    delete_projector: BoolProperty(
+        name="Delete Projector",
+        description="Delete the median object after baking",
+        default=True
+    )
 
 class StableDiffusionRenderPanel(Panel):
     bl_label = "Stable Diffusion Render"
@@ -131,6 +136,7 @@ class StableDiffusionRenderPanel(Panel):
         layout.prop(generate_image_properties, "cn_guidance")
         layout.prop(generate_image_properties, "sd_address")
         layout.prop(generate_image_properties, "sd_port")
+        layout.prop(generate_image_properties, "delete_projector")
         col = self.layout.column(align=True)
         col.operator(RenderButton_operator.bl_idname, text="Render")
 

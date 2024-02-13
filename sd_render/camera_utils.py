@@ -23,10 +23,10 @@ def project_uvs(obj):
             for region in area.regions:
                 if region.type == 'WINDOW':
                     with bpy.context.temp_override(area=area, region=region, edit_object=bpy.context.edit_object):
-                        bpy.ops.view3d.view_camera()
-                        bpy.ops.uv.project_from_view(correct_aspect=True, camera_bounds=True)
+                        #bpy.ops.view3d.view_camera()
+                        bpy.ops.uv.project_from_view()
     bpy.ops.object.mode_set(mode = 'OBJECT')
-    apply_viewport_position(view_params)
+    #apply_viewport_position(view_params)
 
 def project_uv_from_active_camera(obj):
     active_camera = bpy.context.scene.camera

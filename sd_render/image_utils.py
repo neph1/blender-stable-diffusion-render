@@ -36,6 +36,7 @@ def set_projector_position_and_orientation(projector, target_object):
 
 def bake_from_active(projector, target_object):
     bpy.context.active_object.select_set(False)
+    target_object.select_set(True)
     bpy.context.view_layer.objects.active = target_object
     projector.select_set(True)
     #bpy.context.view_layer.objects.active = target_object

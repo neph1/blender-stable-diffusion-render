@@ -51,7 +51,8 @@ def generate(obj) -> str:
     
     bake_from_active(projector, target_object)
     
-    remove_projector(projector)
+    if props.delete_projector:
+        remove_projector(projector)
 
 def execute():
     if len(bpy.context.selected_objects) > 0:
