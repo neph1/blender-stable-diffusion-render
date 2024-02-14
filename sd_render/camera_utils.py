@@ -14,7 +14,7 @@ def render_viewport(image_size):
 
 
 def project_uvs(obj):
-    view_params = save_viewport_position()
+    #view_params = save_viewport_position()
     bpy.context.active_object.select_set(False)
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.mode_set(mode = 'EDIT')

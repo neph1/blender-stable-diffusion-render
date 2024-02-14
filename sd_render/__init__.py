@@ -60,11 +60,36 @@ class StableDiffusionProperties(PropertyGroup):
         description="Seed for random number generator",
         default=-1
     )
-    sampler: StringProperty(
-        name="Sampler",
-        description="Sampler for the model",
-        default="Euler a"
-    )
+
+    samplers = [
+        ('Euler a', "Euler a", ""),
+        ('Euler', "Euler", ""),
+        ('LMS', "LMS", ""),
+        ('Heun', "Heun", ""),
+        ('DPM2', "DPM2", ""),
+        ('DPM2 a', "DPM2 a", ""),
+        ('DPM++ 2S a', "DPM++ 2S a", ""),
+        ('DPM++ 2M', "DPM++ 2M", ""),
+        ('DPM fast', "DPM fast", ""),
+        ('DPM adaptive', "DPM adaptive", ""),
+        ('LMS Karras', "LMS Karras", ""),
+        ('DPM2 Karras', "DPM2 Karras", ""),
+        ('DPM2 a Karras', "DPM2 a Karras", ""),
+        ('DPM++ 2S a Karras', "DPM++ 2S a Karras", ""),
+        ('DPM++ 2M Karras', "DPM++ 2M Karras", ""),
+        ('DPM++ SDE Karras', "DPM++ SDE Karras", ""),
+        ('DPM++ 2M SDE Karras', "DPM++ 2M SDE Karras", ""),
+        ('DDIM', "DDIM", ""),
+        ('PLMS', "PLMS", ""),
+        ('UniPC', "UniPC", ""),
+
+    ]
+
+    sampler: EnumProperty(name="Sampler", 
+                           items=samplers, 
+                           description="Sampler for the model",
+                           default='Euler a')
+
     steps: IntProperty(
         name="Steps",
         description="Number of steps for generation",
@@ -105,6 +130,16 @@ class StableDiffusionProperties(PropertyGroup):
         description="Port to SD backend",
         default="7860"
     )
+    material_slot: StringProperty(
+        name="Material slot",
+        description="Material slot in target object",
+        default="7860"
+    )
+    texture_slot: StringProperty(
+        name="Texture slot",
+        description="Texture slot in material slot",
+        default="7860"
+    )
     delete_projector: BoolProperty(
         name="Delete Projector",
         description="Delete the median object after baking",
@@ -124,19 +159,29 @@ class StableDiffusionRenderPanel(Panel):
 
         generate_image_properties = scene.sd_link_properties
 
+
+
+        layout.label(text="Generation settings")
         layout.prop(generate_image_properties, "prompt")
         layout.prop(generate_image_properties, "negative_prompt")
         layout.prop(generate_image_properties, "seed")
-        layout.prop(generate_image_properties, "sampler")
+        layout.prop(generate_image_properties, "sampler", text="Sampler")
         layout.prop(generate_image_properties, "steps")
         layout.prop(generate_image_properties, "cfg_scale")
         layout.prop(generate_image_properties, "width")
         layout.prop(generate_image_properties, "height")
         layout.prop(generate_image_properties, "cn_weight")
         layout.prop(generate_image_properties, "cn_guidance")
+        layout.separator()
+        layout.label(text="Backend settings")
         layout.prop(generate_image_properties, "sd_address")
         layout.prop(generate_image_properties, "sd_port")
+        layout.separator()
+        layout.label(text="Baking settings")
         layout.prop(generate_image_properties, "delete_projector")
+        #layout.prop(generate_image_properties, "material_slot")
+        #layout.prop(generate_image_properties, "texture_slot")
+
         col = self.layout.column(align=True)
         col.operator(RenderButton_operator.bl_idname, text="Render")
 

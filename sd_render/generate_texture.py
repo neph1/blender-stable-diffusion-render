@@ -19,7 +19,6 @@ def generate(obj) -> str:
 
     generator = Automatic1111(address=props.sd_address, port=props.sd_port)
     depth_map = '/tmp/viewer_node.png'
-    
     #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
                                              negative_prompt=props.negative_prompt,
@@ -49,7 +48,7 @@ def generate(obj) -> str:
     
     project_uvs(projector)
     
-    bake_from_active(projector, target_object)
+    bake_from_active(projector, target_object, props.material_slot, props.texture_slot)
     
     if props.delete_projector:
         remove_projector(projector)

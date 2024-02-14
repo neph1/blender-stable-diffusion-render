@@ -34,8 +34,10 @@ def set_projector_position_and_orientation(projector, target_object):
     projector.location = target_object.location
     projector.rotation_euler = target_object.rotation_euler
 
-def bake_from_active(projector, target_object):
+def bake_from_active(projector, target_object, material_slot_index=0, texture_slot_index=0):
     bpy.context.active_object.select_set(False)
+    #material = target_object.data.materials[material_slot_index]  # Replace with desired material index
+    #texture_slot = material.texture_slots[texture_slot_index]
     target_object.select_set(True)
     bpy.context.view_layer.objects.active = target_object
     projector.select_set(True)
