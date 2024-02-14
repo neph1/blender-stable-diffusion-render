@@ -8,6 +8,8 @@ It will retain your existing UV coords and bake the result to them.
 
 Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen. Only one object at a time (for now)
 
+Example video: https://youtu.be/_VmOCM1rY7g
+
 Steps:
 
 1. Download the 'sd_render' folder and install it as an addon.
