@@ -12,10 +12,11 @@ class ImageGeneratorBase(ABC):
         self.url = f"http://{self.address}:{self.port}{endpoint}"
 
     def convert_image(self, image_data: bytes, output_folder: str, image_name):
-        image = Image.open(io.BytesIO(base64.b64decode(image_data)))
+        try:
+            decoded_data = base64.b64decode(image_data)
+            # Further processing with the decoded data
+        except base64.binascii.Error as e:
+            print("Error decoding base64 data:", e)
+        image = Image.open(io.BytesIO(decoded_data))
         path = os.path.join(output_folder, image_name + '.png')
         image.save(path)
-
-    def generate_image(self, prompt: str, packed_image: str) -> str:
-        pass
-

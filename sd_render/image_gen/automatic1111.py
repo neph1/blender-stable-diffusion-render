@@ -21,10 +21,7 @@ class Automatic1111(ImageGeneratorBase):
         return image_data
 
 
-    def send_request(self, prompt, packed_image, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float) -> bytes:
-        
-        with open(packed_image, "rb") as b:
-            current_image = base64.b64encode(b.read()).decode("utf-8")
+    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float) -> bytes:
 
         data = {
             "prompt": prompt,
@@ -45,7 +42,7 @@ class Automatic1111(ImageGeneratorBase):
                 "ControlNet":{
                     "args": [
                         {
-                            "input_image": packed_image,
+                            "input_image": depth_map,
                             "module": "none",
                             "model": "control_depth-fp16 [400750f6]",
                             "weight": cn_weight,
