@@ -12,6 +12,17 @@ Limitations: The intermediate object has its uv's projected from the view. So ev
 
 Example video: https://youtu.be/_VmOCM1rY7g
 
+Why use this method?
+
+1. Control. This is probably even quicker than sketching in a 2D program
+2. Post processing. Use your textured objects as part of a scene, animate them, light them, put them in a stew.
+
+Is this cheating?
+
+Maybe. And if so, it's a good thing. Some inspiration:
+Ian Hubert on World Building in Blender:
+https://www.youtube.com/watch?v=whPWKecazgM&pp=ygUhaWFuIGh1YmVydCBibGVuZGVyIHdvcmxkIGJ1aWxkaW5n
+
 Steps:
 
 1. Download the 'sd_render' folder and install it as an addon.
