@@ -2,6 +2,7 @@ import base64
 import json
 
 import os
+import random
 import time
 
 import requests
@@ -15,7 +16,7 @@ class ComfyUi(ImageGeneratorBase):
     def __init__(self, address: str = '127.0.0.1', port: int = 8188) -> None:
         super().__init__("/prompt", address, port)
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '') -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '') -> str:
         """Generate an image from text."""
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler)
         if not image_data:
@@ -112,7 +113,8 @@ class ComfyUi(ImageGeneratorBase):
     def _set_sampler(self, data: dict, sampler: str, cfg: float, seed: int, steps: int, scheduler: str = '') -> dict:
         data["3"]["inputs"]["sampler_name"] = sampler.lower()
         data["3"]["inputs"]["cfg"] = cfg
-        data["3"]["inputs"]["seed"] = seed
+        data["3"]["inputs"]["seed"] = random.randint(0, 18446744073709552000) if seed == -1 else seed
+        print("seed", data["3"]["inputs"]["seed"])
         data["3"]["inputs"]["steps"] = steps
         if scheduler:
             data["3"]["inputs"]["scheduler"] = scheduler

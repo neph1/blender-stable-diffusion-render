@@ -22,7 +22,6 @@ def generate(obj) -> str:
         scheduler = props.scheduler
     else:
         return "Invalid backend selected."
-    print('backend:', props.backend)
     depth_map = '/tmp/viewer_node.png'
     #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
@@ -63,6 +62,8 @@ def generate(obj) -> str:
 def execute():
     if len(bpy.context.selected_objects) > 0:
         obj = bpy.context.selected_objects[0]
+        if obj.type == 'CAMERA':
+            return "Cannot generate texture for camera. Please select an object."
         return generate(obj)
     else:
         return "No object selected. Please select an object."
