@@ -16,16 +16,16 @@ class ComfyUi(ImageGeneratorBase):
     def __init__(self, address: str = '127.0.0.1', port: int = 8188) -> None:
         super().__init__("/prompt", address, port)
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '') -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '') -> str:
         """Generate an image from text."""
-        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler)
+        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model)
         if not image_data:
             return None
         self.convert_image(image_data[0], "/tmp", "sd_output")
         return image_data
 
 
-    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '') -> bytes:
+    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '') -> bytes:
 
         path = self._load_workflow('comfy_ui_workflow.json')
         with open(path) as f:
@@ -36,9 +36,11 @@ class ComfyUi(ImageGeneratorBase):
         if not image_name:
             print("Error uploading image.")
             return None
+        
+        if model:
+            workflow = self.set_model(workflow, model)
 
         workflow = self._set_depth_map(workflow, image_name, cn_weight, cn_guidance)
-        #set the text prompt for our positive CLIPTextEncode
         workflow = self._set_text_prompts(workflow, prompt, negative_prompt)
 
         workflow = self._set_sampler(workflow, sampler, cfg_scale, seed, steps, scheduler)
@@ -46,7 +48,7 @@ class ComfyUi(ImageGeneratorBase):
 
         p = {"prompt": workflow}
         data = json.dumps(p)
-        response = requests.post(self.url, json=p)
+        response = requests.post(self.url + self.generate_endpoint, json=p)
         if not response.status_code == 200:
             try:
                 error_data = response.json()
@@ -66,7 +68,7 @@ class ComfyUi(ImageGeneratorBase):
         return self.get_history(prompt_id)
         
     def get_history(self, prompt_id: str):
-        response = requests.get(f"http://{self.address}:{self.port}/history", data=prompt_id)
+        response = requests.get(f"{self.url}/history", data=prompt_id)
         if response.status_code == 200:
             history = json.loads(response.content)
             history = history[prompt_id]
@@ -84,13 +86,13 @@ class ComfyUi(ImageGeneratorBase):
     def get_image(self, filename, subfolder, folder_type):
         data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
         headers = {"Content-Type": "image/png"}
-        response = requests.get(f"http://{self.address}:{self.port}/view", params=data, headers=headers, stream=True)
+        response = requests.get(f"{self.url}/view", params=data, headers=headers, stream=True)
         if response.status_code == 200:
             return base64.b64encode(response.content).decode('utf-8')
         
     def poll_queue(self, prompt_id: str):    
         """ Return True if the prompt is not in the queue, False otherwise."""
-        response = requests.get(f"http://{self.address}:{self.port}/queue")
+        response = requests.get(f"{self.url}/queue")
         if response.status_code == 200:
             json_data = json.loads(response.content)
             for prompt in json_data['queue_pending']:
@@ -101,6 +103,10 @@ class ComfyUi(ImageGeneratorBase):
                     return False
         return True
         
+    def set_model(self, data: dict, model: str):
+        data["4"]["inputs"]["ckpt_name"] = model
+        return data
+    
     def _load_workflow(self, workflow: str) -> dict:
         file_path = os.path.join(os.path.dirname(__file__) + '/../', workflow)
         return file_path
@@ -136,7 +142,7 @@ class ComfyUi(ImageGeneratorBase):
         with open(depth_map, 'rb') as file:
             files = {'image': file}
             data = {'type': 'input'}
-            response = requests.post(f"http://{self.address}:{self.port}/upload/image", files=files, data=data)
+            response = requests.post(f"{self.url}/upload/image", files=files, data=data)
 
             if response.status_code == 200:
                 return json.loads(response.text)["name"]

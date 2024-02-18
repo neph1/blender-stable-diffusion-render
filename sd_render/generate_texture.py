@@ -35,7 +35,8 @@ def generate(obj) -> str:
                                              cn_weight=props.cn_weight,
                                              cn_guidance=props.cn_guidance,
                                              depth_map=depth_map,
-                                             scheduler=scheduler)
+                                             scheduler=scheduler,
+                                             model=props.model)
     try:
         texture_image = bpy.data.images.load('/tmp/sd_output.png')
     except:

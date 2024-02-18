@@ -9,7 +9,8 @@ class ImageGeneratorBase(ABC):
     def __init__(self, endpoint: str, address: str = 'localhost', port: int = 7860) -> None:
         self.address = address
         self.port = port
-        self.url = f"http://{self.address}:{self.port}{endpoint}"
+        self.generate_endpoint = endpoint
+        self.url = f"http://{self.address}:{self.port}"
 
     def convert_image(self, image_data: bytes, output_folder: str, image_name):
         try:

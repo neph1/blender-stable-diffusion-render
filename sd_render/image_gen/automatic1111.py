@@ -12,8 +12,10 @@ class Automatic1111(ImageGeneratorBase):
     def __init__(self, address: str = '127.0.0.1', port: int = 7860) -> None:
         super().__init__("/sdapi/v1/txt2img", address, port)
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "Euler a", steps: int = 30, cfg_scale: int = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = None) -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "Euler a", steps: int = 30, cfg_scale: int = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = None, model: str = '') -> str:
         """Generate an image from text."""
+        if model:
+            self.set_model(model)
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance)
         if not image_data:
             return None
@@ -52,10 +54,24 @@ class Automatic1111(ImageGeneratorBase):
                 },
             },
         }
-        response = requests.post(self.url, json=data)
+        response = requests.post(self.url + self.generate_endpoint, json=data)
         if response.status_code == 200:
             json_data = json.loads(response.content)
             return json_data['images'][0]
         else:
             print(f"Error: {response.status_code}")
             return None
+
+    def set_model(self, model: str) -> bool:
+        opt = requests.get(url=f'{self.url}/sdapi/v1/options')
+        opt_json = opt.json()
+        opt_json['sd_model_checkpoint'] = model
+        response = requests.get(url=f'{self.url}/sdapi/v1/sd-models', json=opt_json)
+        if response.status_code != 200:
+            print(f"Error: /sdapi/v1/sd-models {response.status_code}")
+            return False
+        response = requests.post(url=f'{self.url}/sdapi/v1/options', json=opt_json)
+        if response.status_code != 200:
+            print(f"Error: /sdapi/v1/options {response.status_code}")
+            return False
+        return True
