@@ -1,5 +1,4 @@
 import base64
-from io import BufferedWriter
 import json
 
 import os
@@ -131,9 +130,14 @@ class ComfyUi(ImageGeneratorBase):
         return data
     
     def _upload_image(self, depth_map: str) -> str:
+        print('uploading image', depth_map)
         with open(depth_map, 'rb') as file:
-            # Create a dictionary containing the file data
-            response = requests.post(f"http://{self.address}:{self.port}/upload/image", data=f"image={file}")
+            files = {'image': file}
+            data = {'type': 'input'}
+            response = requests.post(f"http://{self.address}:{self.port}/upload/image", files=files, data=data)
+
             if response.status_code == 200:
-                return response.content["name"]
+                return json.loads(response.text)["name"]
+            else:
+                print(f"Error uploading image: {response.status_code}")
             return None

@@ -12,7 +12,7 @@ class Automatic1111(ImageGeneratorBase):
     def __init__(self, address: str = '127.0.0.1', port: int = 7860) -> None:
         super().__init__("/sdapi/v1/txt2img", address, port)
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "Euler a", steps: int = 30, cfg_scale: int = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1) -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "Euler a", steps: int = 30, cfg_scale: int = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = None) -> str:
         """Generate an image from text."""
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance)
         if not image_data:
@@ -57,11 +57,5 @@ class Automatic1111(ImageGeneratorBase):
             json_data = json.loads(response.content)
             return json_data['images'][0]
         else:
-            try:
-                error_data = response.json()
-                print("Error:")
-                print(str(error_data))
-                
-            except json.JSONDecodeError:
-                print(f"Error: Unable to parse JSON error data.")
+            print(f"Error: {response.status_code}")
             return None

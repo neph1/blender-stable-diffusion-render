@@ -13,9 +13,16 @@ def generate(obj) -> str:
     props = bpy.context.scene.sd_link_properties
     image_size = 512
     rendered_image = render_viewport(image_size)
-    bytes = bytearray()
 
-    generator = ComfyUi(address=props.sd_address, port=props.sd_port)
+    if (props.backend == 'Automatic1111'):
+        generator = Automatic1111(address=props.sd_address, port=props.sd_port)
+        scheduler = None
+    elif (props.backend == 'ComfyUI'):
+        generator = ComfyUi(address=props.sd_address, port=props.sd_port)
+        scheduler = props.scheduler
+    else:
+        return "Invalid backend selected."
+    print('backend:', props.backend)
     depth_map = '/tmp/viewer_node.png'
     #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
@@ -28,9 +35,11 @@ def generate(obj) -> str:
                                              height=props.height,
                                              cn_weight=props.cn_weight,
                                              cn_guidance=props.cn_guidance,
-                                             depth_map=depth_map)
-    texture_image = bpy.data.images.load('/tmp/sd_output.png')
-    if not texture_image:
+                                             depth_map=depth_map,
+                                             scheduler=scheduler)
+    try:
+        texture_image = bpy.data.images.load('/tmp/sd_output.png')
+    except:
         return "Failed to generate texture."
     # bake_texture(obj, texture_image)
     
