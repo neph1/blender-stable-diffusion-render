@@ -1,8 +1,6 @@
 import bpy
-import io
-import sys
-import numpy as np
 import logging
+from sd_render.image_gen.comfy_ui import ComfyUi
 from sd_render.image_gen.automatic1111 import Automatic1111
 from sd_render.camera_utils import render_viewport, project_uvs, project_uv_from_active_camera
 from sd_render.image_utils import bake_from_active, create_projector_object, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector
@@ -15,9 +13,16 @@ def generate(obj) -> str:
     props = bpy.context.scene.sd_link_properties
     image_size = 512
     rendered_image = render_viewport(image_size)
-    bytes = bytearray()
 
-    generator = Automatic1111(address=props.sd_address, port=props.sd_port)
+    if (props.backend == 'Automatic1111'):
+        generator = Automatic1111(address=props.sd_address, port=props.sd_port)
+        scheduler = None
+    elif (props.backend == 'ComfyUI'):
+        generator = ComfyUi(address=props.sd_address, port=props.sd_port)
+        scheduler = props.scheduler
+    else:
+        return "Invalid backend selected."
+    print('backend:', props.backend)
     depth_map = '/tmp/viewer_node.png'
     #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
@@ -30,9 +35,11 @@ def generate(obj) -> str:
                                              height=props.height,
                                              cn_weight=props.cn_weight,
                                              cn_guidance=props.cn_guidance,
-                                             depth_map=depth_map)
-    texture_image = bpy.data.images.load('/tmp/sd_output.png')
-    if not texture_image:
+                                             depth_map=depth_map,
+                                             scheduler=scheduler)
+    try:
+        texture_image = bpy.data.images.load('/tmp/sd_output.png')
+    except:
         return "Failed to generate texture."
     # bake_texture(obj, texture_image)
     
