@@ -20,8 +20,9 @@ Why use this method?
 Is this cheating?
 
 Maybe. And if so, it's a good thing. Some inspiration:
+
 Ian Hubert on World Building in Blender:
-https://www.youtube.com/watch?v=whPWKecazgM&pp=ygUhaWFuIGh1YmVydCBibGVuZGVyIHdvcmxkIGJ1aWxkaW5n
+https://youtu.be/whPWKecazgM
 
 Steps:
 
