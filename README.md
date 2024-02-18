@@ -33,3 +33,11 @@ Steps:
 ![Screenshot from 2024-02-12 17-57-42](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/5842777d-7029-4978-b043-6ba1e7005f8b)
 
 ![Screenshot from 2024-02-12 17-59-34](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/80ed6400-67af-4c0e-9b24-a16a846ce50a)
+
+
+Switching backend:
+This happens in the addon preferences
+
+![Screenshot from 2024-02-18 14-51-16](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/a28c80e8-a782-4372-b892-1c0b140bba1a)
+
+After switching, you need to restart for the configuration properties to update
