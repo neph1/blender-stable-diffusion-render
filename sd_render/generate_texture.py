@@ -11,8 +11,7 @@ logger.addHandler(logging.StreamHandler())
 
 def generate(obj) -> str:
     props = bpy.context.scene.sd_link_properties
-    image_size = 512
-    rendered_image = render_viewport(image_size)
+    rendered_image = render_viewport(props.ref_image_width, props.ref_image_height)
 
     if (props.backend == 'Automatic1111'):
         generator = Automatic1111(address=props.sd_address, port=props.sd_port)
@@ -55,7 +54,7 @@ def generate(obj) -> str:
     
     project_uvs(projector)
     
-    bake_from_active(projector, target_object, props.material_slot, props.texture_slot)
+    bake_from_active(projector, target_object)
     
     if props.delete_projector:
         remove_projector(projector)

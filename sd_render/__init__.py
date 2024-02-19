@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Stable Diffusion Render and Bake",
     "author": "Rickard Edén",
-    "version": (1, 0, 0),
+    "version": (1, 1, 0),
     "blender": (4, 0, 0),
     "location": "Render > Stable Diffusion Render (Create Tab)",
     "description": "Stable Diffusion Render and Bake",
@@ -116,20 +116,25 @@ class StableDiffusionProperties(PropertyGroup):
         description="Port to SD backend",
         default="7860"
     )
-    material_slot: StringProperty(
-        name="Material slot",
-        description="Material slot in target object",
-        default="7860"
-    )
-    texture_slot: StringProperty(
-        name="Texture slot",
-        description="Texture slot in material slot",
-        default="7860"
-    )
     delete_projector: BoolProperty(
         name="Delete Projector",
         description="Delete the median object after baking",
         default=True
+    )
+    model: StringProperty(
+        name="Model",
+        description="Model to use. Include file ending. Leave empty to use workflow default.",
+        default=""
+    )
+    ref_image_width: IntProperty(
+        name="Reference Image Width",
+        description="Width of the reference image (depth map)",
+        default=512
+    )
+    ref_image_height: IntProperty(
+        name="Reference Image Height",
+        description="Height of the reference image (depth map)",
+        default=512
     )
 
 class Automatic1111Properties(StableDiffusionProperties):
@@ -245,8 +250,9 @@ class ComfyUiSettings(Panel):
 
 def draw_generation_settings(layout, generate_image_properties):
     layout.prop(generate_image_properties, "sampler", text="Sampler")
-    layout.prop(generate_image_properties, "prompt")
-    layout.prop(generate_image_properties, "negative_prompt")
+    layout.prop(generate_image_properties, "prompt", expand=True)
+    layout.prop(generate_image_properties, "negative_prompt", expand=True)
+    layout.prop(generate_image_properties, "model")
     layout.prop(generate_image_properties, "seed")
     layout.prop(generate_image_properties, "steps")
     layout.prop(generate_image_properties, "cfg_scale")
@@ -254,6 +260,8 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.prop(generate_image_properties, "height")
     layout.prop(generate_image_properties, "cn_weight")
     layout.prop(generate_image_properties, "cn_guidance")
+    layout.prop(generate_image_properties, "ref_image_width")
+    layout.prop(generate_image_properties, "ref_image_height")
     layout.separator()
     layout.label(text="Backend settings")
     layout.prop(generate_image_properties, "sd_address")
@@ -261,8 +269,6 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.separator()
     layout.label(text="Baking settings")
     layout.prop(generate_image_properties, "delete_projector")
-    #layout.prop(generate_image_properties, "material_slot")
-    #layout.prop(generate_image_properties, "texture_slot")
 
 
 class RenderButton_operator(bpy.types.Operator):

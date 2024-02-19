@@ -1,6 +1,4 @@
 import bpy
-import numpy as np
-
 
 def create_projector_object(obj):
     """Create a projector object"""
@@ -34,15 +32,14 @@ def set_projector_position_and_orientation(projector, target_object):
     projector.location = target_object.location
     projector.rotation_euler = target_object.rotation_euler
 
-def bake_from_active(projector, target_object, material_slot_index=0, texture_slot_index=0):
+def bake_from_active(projector, target_object):
     bpy.context.active_object.select_set(False)
-    #material = target_object.data.materials[material_slot_index]  # Replace with desired material index
-    #texture_slot = material.texture_slots[texture_slot_index]
-    target_object.select_set(True)
-    bpy.context.view_layer.objects.active = target_object
+    
+
     projector.select_set(True)
     #bpy.context.view_layer.objects.active = target_object
-    target_object.data.uv_layers.active = target_object.data.uv_layers[0]
+    bpy.context.view_layer.objects.active = target_object
+    target_object.select_set(True)
     bpy.context.scene.render.bake.use_selected_to_active = True
     bpy.ops.object.bake(type='COMBINED', use_clear=True, cage_extrusion=0.1)
     

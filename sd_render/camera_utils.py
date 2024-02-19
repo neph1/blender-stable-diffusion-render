@@ -2,9 +2,9 @@ import bpy
 
 
 
-def render_viewport(image_size):
-    bpy.context.scene.render.resolution_x = image_size
-    bpy.context.scene.render.resolution_y = image_size
+def render_viewport(width, height):
+    bpy.context.scene.render.resolution_x = width
+    bpy.context.scene.render.resolution_y = height
     bpy.context.scene.render.image_settings.file_format = "PNG"
     bpy.ops.render.render(write_still=True)
     
