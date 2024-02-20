@@ -13,15 +13,15 @@ class ComfyUi(ImageGeneratorBase):
 
     sampler_id = "8"   
     
-    def __init__(self, address: str = '127.0.0.1', port: int = 8188) -> None:
-        super().__init__("/prompt", address, port)
+    def __init__(self, output_folder: str, address: str = '127.0.0.1', port: int = 8188) -> None:
+        super().__init__("/prompt", output_folder, address, port)
 
     def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '') -> str:
         """Generate an image from text."""
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model)
         if not image_data:
             return None
-        self.convert_image(image_data[0], "/tmp", "sd_output")
+        self.convert_image(image_data[0], "sd_output")
         return image_data
 
 

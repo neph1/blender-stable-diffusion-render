@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Stable Diffusion Render and Bake",
     "author": "Rickard Edén",
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (4, 0, 0),
     "location": "Render > Stable Diffusion Render (Create Tab)",
     "description": "Stable Diffusion Render and Bake",

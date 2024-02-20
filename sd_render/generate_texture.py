@@ -12,12 +12,13 @@ logger.addHandler(logging.StreamHandler())
 def generate(obj) -> str:
     props = bpy.context.scene.sd_link_properties
     rendered_image = render_viewport(props.ref_image_width, props.ref_image_height)
-
+    output_folder = bpy.context.scene.render.filepath
+    print("Output folder:", output_folder)
     if (props.backend == 'Automatic1111'):
-        generator = Automatic1111(address=props.sd_address, port=props.sd_port)
+        generator = Automatic1111(address=props.sd_address, port=props.sd_port, output_folder=output_folder)
         scheduler = None
     elif (props.backend == 'ComfyUI'):
-        generator = ComfyUi(address=props.sd_address, port=props.sd_port)
+        generator = ComfyUi(address=props.sd_address, port=props.sd_port, output_folder=output_folder)
         scheduler = props.scheduler
     else:
         return "Invalid backend selected."
@@ -37,7 +38,7 @@ def generate(obj) -> str:
                                              scheduler=scheduler,
                                              model=props.model)
     try:
-        texture_image = bpy.data.images.load('/tmp/sd_output.png')
+        texture_image = bpy.data.images.load(f'{output_folder}/sd_output.png')
     except:
         return "Failed to generate texture."
     # bake_texture(obj, texture_image)
