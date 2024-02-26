@@ -52,7 +52,7 @@ def generate(obj) -> str:
     set_projector_position_and_orientation(projector, target_object)
     projector_material = setup_projector_material(texture_image)
     assign_material_to_projector(projector, projector_material)
-    
+    bpy.ops.object.mode_set(mode = 'OBJECT')
     project_uvs(projector)
     
     bake_from_active(projector, target_object)

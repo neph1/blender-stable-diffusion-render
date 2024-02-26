@@ -14,7 +14,7 @@ def render_viewport(width, height):
 
 
 def project_uvs(obj):
-    #view_params = save_viewport_position()
+    view_params = save_viewport_position()
     bpy.context.active_object.select_set(False)
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.mode_set(mode = 'EDIT')
@@ -22,11 +22,11 @@ def project_uvs(obj):
         if area.type == 'VIEW_3D':
             for region in area.regions:
                 if region.type == 'WINDOW':
-                    with bpy.context.temp_override(area=area, region=region, edit_object=bpy.context.edit_object):
-                        #bpy.ops.view3d.view_camera()
+                    with bpy.context.temp_override(area=area, region=region, edit_object=obj):
+                        bpy.ops.view3d.view_camera()
                         bpy.ops.uv.project_from_view()
     bpy.ops.object.mode_set(mode = 'OBJECT')
-    #apply_viewport_position(view_params)
+    apply_viewport_position(view_params)
 
 def project_uv_from_active_camera(obj):
     active_camera = bpy.context.scene.camera
