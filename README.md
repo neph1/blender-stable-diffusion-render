@@ -34,7 +34,7 @@ Steps:
 
 4. Set up a viewer node and render depth. Save result
 
-5. Set active camera as view (Important to get correct projection)
+5. Adjust the camera to maximize rendered area and for optimal projection (No longer needs to align with viewport)
 
 6. Select object and hit "Render" in the "Stable Diffusion Render" panel in the "Render" tab
 
