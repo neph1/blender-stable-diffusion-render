@@ -11,8 +11,8 @@ logger.addHandler(logging.StreamHandler())
 
 def generate(obj) -> str:
     props = bpy.context.scene.sd_link_properties
-    rendered_image = render_viewport(props.ref_image_width, props.ref_image_height)
     output_folder = bpy.context.scene.render.filepath
+    rendered_image = render_viewport(props.ref_image_width, props.ref_image_height, output_folder)
     print("Output folder:", output_folder)
     if (props.backend == 'Automatic1111'):
         generator = Automatic1111(address=props.sd_address, port=props.sd_port, output_folder=output_folder)
@@ -22,7 +22,7 @@ def generate(obj) -> str:
         scheduler = props.scheduler
     else:
         return "Invalid backend selected."
-    depth_map = '/tmp/viewer_node.png'
+    depth_map = f'{output_folder}/viewer_node.png'
     #generated_path = "/tmp/sd_output.png"
     generated_path = generator.generate_image(prompt=props.prompt,
                                              negative_prompt=props.negative_prompt,

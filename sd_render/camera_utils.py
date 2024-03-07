@@ -2,13 +2,13 @@ import bpy
 
 
 
-def render_viewport(width, height):
+def render_viewport(width, height, path):
     bpy.context.scene.render.resolution_x = width
     bpy.context.scene.render.resolution_y = height
     bpy.context.scene.render.image_settings.file_format = "PNG"
     bpy.ops.render.render(write_still=True)
     
-    outputPath = "/tmp/viewer_node.png"  # Set the desired output path
+    outputPath = f"{path}/viewer_node.png"  # Set the desired output path
     bpy.data.images["Viewer Node"].save_render(outputPath)
     return bpy.data.images["Viewer Node"]
 
