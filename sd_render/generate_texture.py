@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
-def generate(obj) -> str:
-    props = bpy.context.scene.sd_link_properties
+def render(props):
     output_folder = bpy.context.scene.render.filepath
     rendered_image = render_viewport(props.ref_image_width, props.ref_image_height, output_folder)
     print("Output folder:", output_folder)
@@ -38,12 +37,12 @@ def generate(obj) -> str:
                                              scheduler=scheduler,
                                              model=props.model)
     try:
-        texture_image = bpy.data.images.load(f'{output_folder}/sd_output.png')
+        return bpy.data.images.load(f'{output_folder}/sd_output.png')
     except:
         return "Failed to generate texture."
-    # bake_texture(obj, texture_image)
-    
-    target_object = obj
+
+
+def bake(target_object, texture_image, delete_projector: bool) -> str:
     
     bpy.context.active_object.select_set(False)
     
@@ -56,15 +55,23 @@ def generate(obj) -> str:
     project_uvs(projector)
     
     bake_from_active(projector, target_object)
-    
-    if props.delete_projector:
+
+    if delete_projector:
         remove_projector(projector)
 
 def execute():
-    if len(bpy.context.selected_objects) > 0:
+    props = bpy.context.scene.sd_link_properties
+    if len(bpy.context.selected_objects) == 0 and props.bake_texture:
+        return "No object selected. Please select an object."
+    
+    texture_image = render(props)
+    if isinstance(texture_image, str):
+        return texture_image # Error message
+    
+    obj = None
+    if props.bake_texture:
         obj = bpy.context.selected_objects[0]
         if obj.type == 'CAMERA':
             return "Cannot generate texture for camera. Please select an object."
-        return generate(obj)
-    else:
-        return "No object selected. Please select an object."
+    return bake(obj, texture_image=texture_image, delete_projector=props.delete_projector)
+

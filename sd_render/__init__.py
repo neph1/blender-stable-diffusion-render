@@ -136,6 +136,11 @@ class StableDiffusionProperties(PropertyGroup):
         description="Height of the reference image (depth map)",
         default=512
     )
+    bake_texture: BoolProperty(
+        name="Bake texture to object",
+        description="Bake the generated image to the selected object",
+        default=True
+    )
 
 class Automatic1111Properties(StableDiffusionProperties):
     auto1111_samplers = [
@@ -269,6 +274,7 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.separator()
     layout.label(text="Baking settings")
     layout.prop(generate_image_properties, "delete_projector")
+    layout.prop(generate_image_properties, "bake_texture")
 
 
 class RenderButton_operator(bpy.types.Operator):
