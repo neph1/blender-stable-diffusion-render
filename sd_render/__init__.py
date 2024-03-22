@@ -26,6 +26,7 @@ else:
 import bpy
 
 from sd_render import generate_texture
+import os
 
 from bpy.props import (StringProperty,
                        BoolProperty,
@@ -54,6 +55,7 @@ class BackendSelector(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "backend_enum", text="Backend")
+
 class StableDiffusionProperties(PropertyGroup):
     prompt: StringProperty(
         name="Prompt",
@@ -197,6 +199,14 @@ class ComfyUiProperties(StableDiffusionProperties):
         ('uni_pc_bh2', "uni_pc_bh2", ""),
 
     ]
+        
+    workflows = [(file, file, "") for file in os.listdir(os.path.join(os.path.dirname(__file__), "workflows"))]
+
+    workflow: EnumProperty(name="Workflow", 
+                           items=workflows, 
+                           description="Workflow to use",
+                           default='comfy_depth_workflow.json')
+
 
     sampler: EnumProperty(name="Sampler", 
                            items=comfy_samplers, 
@@ -212,12 +222,12 @@ class ComfyUiProperties(StableDiffusionProperties):
         ('ddim_uniform', "ddim_uniform", "UniPC, DDIM"),
     ]
 
+
     scheduler: EnumProperty(name="Scheduler",
                             items=comfy_schedulers,
                             description="Scheduler for the model",
                             default='normal')
     backend: StringProperty(name="backend", default="ComfyUI")
-
 
 class Automatic1111Settings(Panel):
     bl_label = "Stable Diffusion Render"
@@ -247,10 +257,13 @@ class ComfyUiSettings(Panel):
         scene = context.scene
         
         generate_image_properties = scene.sd_link_properties
+        layout.prop(generate_image_properties, "workflow", text="Workflow")
         layout.prop(generate_image_properties, "scheduler", text="Scheduler")
         draw_generation_settings(layout, generate_image_properties)
         col = self.layout.column(align=True)
         col.operator(RenderButton_operator.bl_idname, text="Render")
+    
+    
 
 
 def draw_generation_settings(layout, generate_image_properties):

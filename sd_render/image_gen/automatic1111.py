@@ -13,7 +13,6 @@ class Automatic1111(ImageGeneratorBase):
         super().__init__("/sdapi/v1/txt2img", output_folder, address, port)
 
     def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = 0, sampler: str = "Euler a", steps: int = 30, cfg_scale: int = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = None, model: str = '') -> str:
-        """Generate an image from text."""
         if model:
             self.set_model(model)
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance)

@@ -13,8 +13,9 @@ class ComfyUi(ImageGeneratorBase):
 
     sampler_id = "8"   
     
-    def __init__(self, output_folder: str, address: str = '127.0.0.1', port: int = 8188) -> None:
+    def __init__(self, output_folder: str, address: str = '127.0.0.1', port: int = 8188, workflow: str = 'comfy_depth_workflow.json') -> None:
         super().__init__("/prompt", output_folder, address, port)
+        self.workflow = workflow
 
     def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '') -> str:
         """Generate an image from text."""
@@ -27,7 +28,7 @@ class ComfyUi(ImageGeneratorBase):
 
     def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '') -> bytes:
 
-        path = self._load_workflow('comfy_ui_workflow.json')
+        path = self._load_workflow(self.workflow)
         with open(path) as f:
             workflow = json.load(f)
 
