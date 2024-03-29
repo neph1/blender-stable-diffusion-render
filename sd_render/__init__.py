@@ -15,6 +15,7 @@ if "bpy" in locals():
     import importlib
     importlib.reload(base64)
     importlib.reload(numpy)
+    importlib.reload(PIL)
     importlib.reload(base_gen)
     importlib.reload(automatic111)
     importlib.reload(image_utils)
@@ -22,6 +23,7 @@ if "bpy" in locals():
 else:
     import base64
     import numpy
+    import PIL
 
 import bpy
 
@@ -307,12 +309,10 @@ def update_options(context):
         bpy.utils.register_class(Automatic1111Properties)
         bpy.types.Scene.sd_link_properties = PointerProperty(type=Automatic1111Properties)
         bpy.utils.register_class(Automatic1111Settings)
-        bpy.types.Scene.sd_link_properties.backend = 'Automatic1111'
     elif preferences.backend_enum == 'ComfyUI':
         bpy.utils.register_class(ComfyUiProperties)
         bpy.types.Scene.sd_link_properties = PointerProperty(type=ComfyUiProperties)
         bpy.utils.register_class(ComfyUiSettings)
-        bpy.types.Scene.sd_link_properties.backend = 'ComfyUI'
 
 def register():
     bpy.utils.register_class(RenderButton_operator)

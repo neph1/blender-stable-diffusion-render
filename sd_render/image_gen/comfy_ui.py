@@ -109,7 +109,7 @@ class ComfyUi(ImageGeneratorBase):
         return data
     
     def _load_workflow(self, workflow: str) -> dict:
-        file_path = os.path.join(os.path.dirname(__file__) + '/../', workflow)
+        file_path = os.path.join(os.path.dirname(__file__) + '/../workflows/', workflow)
         return file_path
         
     def _set_text_prompts(self, data: dict, prompt: str, negative_prompt: str) -> dict:
