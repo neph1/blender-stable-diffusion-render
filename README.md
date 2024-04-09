@@ -11,6 +11,7 @@ Supports both Automatic1111 and ComfyUI backends
 Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen. Only one object at a time (for now)
 
 Example video: https://youtu.be/_VmOCM1rY7g
+More complex example: https://youtu.be/TsxcImL1cCk
 
 Why use this method?
 
