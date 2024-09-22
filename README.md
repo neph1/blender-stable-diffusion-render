@@ -37,7 +37,7 @@ Steps:
 
 3. Unwrap the UV map.
 
-4. Set up a viewer node and render depth. Save result
+4. Set up a viewer node and render depth. Save result (Note: You can use other control nets, see repo for example with 'scribble'. In that case, you still need to add a viewer node, but just let it show the normal view.)
 
 5. Adjust the camera to maximize rendered area and for optimal projection (No longer needs to align with viewport)
 
