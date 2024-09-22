@@ -10,7 +10,9 @@ It will retain your existing UV coords and bake the result to them.
 
 Supports both Automatic1111 and ComfyUI backends
 
-Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen. Multiple objects since [v1.5.0](https://github.com/neph1/blender-stable-diffusion-render/releases/tag/v1.5.0)
+Limitations: The intermediate object has its uv's projected from the view. So even though the result will be mapped 'around' the object, it won't render what isn't seen. Currently doesn't take subdivisions into consideration for the baking.
+
+Multiple objects since [v1.5.0](https://github.com/neph1/blender-stable-diffusion-render/releases/tag/v1.5.0)
 
 Example video: https://youtu.be/_VmOCM1rY7g
 More complex example: https://youtu.be/TsxcImL1cCk
