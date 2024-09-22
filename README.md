@@ -3,6 +3,8 @@ A Blender addon for using Stable Diffusion to render texture bakes for objects.
 
 ![examples](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/8f22d031-5f5d-47e9-a0c2-dd9dde0a0a4c)
 
+![scene example](https://github.com/user-attachments/assets/3309579f-03b8-4a0d-ad20-983eaacaba89)
+
 
 It will retain your existing UV coords and bake the result to them.
 
