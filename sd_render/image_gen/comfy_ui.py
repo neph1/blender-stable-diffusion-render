@@ -17,16 +17,16 @@ class ComfyUi(ImageGeneratorBase):
         super().__init__("/prompt", output_folder, address, port)
         self.workflow = workflow
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '') -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '', cn_start: float = 0.0, cn_end: float = 1.0) -> str:
         """Generate an image from text."""
-        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model)
+        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model, cn_start, cn_end)
         if not image_data:
             return None
         self.convert_image(image_data[0], "sd_output")
         return image_data
 
 
-    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '') -> bytes:
+    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, cn_start: float, cn_end: float, scheduler: str = '', model: str = '') -> bytes:
 
         path = self._load_workflow(self.workflow)
         with open(path) as f:
@@ -41,7 +41,7 @@ class ComfyUi(ImageGeneratorBase):
         if model:
             workflow = self.set_model(workflow, model)
 
-        workflow = self._set_depth_map(workflow, image_name, cn_weight, cn_guidance)
+        workflow = self._set_control_net(workflow, image_name, cn_weight, cn_guidance, cn_start, cn_end)
         workflow = self._set_text_prompts(workflow, prompt, negative_prompt)
 
         workflow = self._set_sampler(workflow, sampler, cfg_scale, seed, steps, scheduler)
@@ -132,14 +132,14 @@ class ComfyUi(ImageGeneratorBase):
         data["5"]["inputs"]["height"] = height
         return data
     
-    def _set_depth_map(self, data:dict, depth_map: str, weight: float, guidance: float) -> dict:
-        print('setting depth map', depth_map, weight, guidance)
+    def _set_control_net(self, data:dict, depth_map: str, weight: float, guidance: float, start: float, end: float) -> dict:
         data["11"]["inputs"]["image"] = depth_map
         data["13"]["inputs"]["strength"] = weight
+        data["13"]["inputs"]["start_percent"] = start
+        data["13"]["inputs"]["end_percent"] = end
         return data
     
     def _upload_image(self, depth_map: str) -> str:
-        print('uploading image', depth_map)
         with open(depth_map, 'rb') as file:
             files = {'image': file}
             data = {'type': 'input'}

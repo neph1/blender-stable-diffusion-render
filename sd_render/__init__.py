@@ -110,6 +110,16 @@ class StableDiffusionProperties(PropertyGroup):
         description="Control net guidance / strength",
         default=1
     )
+    cn_start: FloatProperty(
+        name="CN Start",
+        description="Control net start percentage",
+        default=0.0
+    )
+    cn_end: FloatProperty(
+        name="CN End",
+        description="Control net end percentage",
+        default=1.0
+    )
     sd_address: StringProperty(
         name="Address",
         description="Address to SD backend",
@@ -185,9 +195,11 @@ class ComfyUiProperties(StableDiffusionProperties):
         ('heun', "heun", ""),
         ('dpm_2', "dpm_2", ""),
         ('dpm_2_ancestral', "dpm_2_ancestral", ""),
+        ('lcm', "lcm", ""),
         ('lms', "lms", ""),
         ('dpm_fast', "dpm_fast", ""),
         ('dpm_adaptive', "dpm_adaptive", ""),
+        ('ddpm', "ddpm", ""),
         ('dpmpp_2s_ancestral', "dpmpp_2s_ancestral", ""),
         ('dpmpp_sde', "dpmpp_sde", ""),
         ('dpmpp_sde_gpu', "dpmpp_sde_gpu", ""),
@@ -280,6 +292,8 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.prop(generate_image_properties, "height")
     layout.prop(generate_image_properties, "cn_weight")
     layout.prop(generate_image_properties, "cn_guidance")
+    layout.prop(generate_image_properties, "cn_start")
+    layout.prop(generate_image_properties, "cn_end")
     layout.prop(generate_image_properties, "ref_image_width")
     layout.prop(generate_image_properties, "ref_image_height")
     layout.separator()
