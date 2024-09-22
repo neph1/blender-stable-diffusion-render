@@ -39,7 +39,7 @@ Steps:
 
 4. Set up a viewer node and render depth. Save result (Note: You can use other control nets, see repo for example with 'scribble'. In that case, you still need to add a viewer node, but just let it show the normal view.)
 
-5. Adjust the camera to maximize rendered area and for optimal projection (No longer needs to align with viewport)
+5. Adjust the camera to maximize rendered area and for optimal projection
 
 6. Select object and hit "Render" in the "Stable Diffusion Render" panel in the "Render" tab
 
