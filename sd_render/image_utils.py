@@ -1,4 +1,4 @@
-from pyparsing import C
+
 import bpy
 
 def create_projector_objects(obj_list):
@@ -7,8 +7,6 @@ def create_projector_objects(obj_list):
     for obj in obj_list:
         obj_data = obj.data.copy()
         projector = bpy.data.objects.new(name=f"TextureProjector_{obj.name}", object_data=obj_data)
-        if projector.data.uv_layers:
-            projector.data.uv_layers.remove(projector.data.uv_layers[0])
         projector.data.uv_layers.new(name="bake")
         bpy.context.collection.objects.link(projector)
         projectors.append(projector)
@@ -50,8 +48,8 @@ def set_projector_position_and_orientation(projector, target_object):
 def bake_from_active(projector, target_object):
     bpy.context.active_object.select_set(False)
     projector.select_set(True)
-    bpy.context.view_layer.objects.active = target_object
     target_object.select_set(True)
+    bpy.context.view_layer.objects.active = target_object
     bpy.context.scene.render.bake.use_selected_to_active = True
     print("Baking to object", target_object.name)
     bpy.ops.object.bake(type='COMBINED', use_clear=True, cage_extrusion=0.1)
