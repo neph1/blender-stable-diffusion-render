@@ -3,7 +3,7 @@ import logging
 from sd_render.image_gen.comfy_ui import ComfyUi
 from sd_render.image_gen.automatic1111 import Automatic1111
 from sd_render.camera_utils import render_viewport, project_uvs
-from sd_render.image_utils import bake_from_active, create_projector_object, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector
+from sd_render.image_utils import bake_from_active, create_projector_objects, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector, create_projector_object_from_list
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -42,22 +42,29 @@ def render(props):
         return "Failed to generate texture."
 
 
-def bake(target_object, texture_image, delete_projector: bool) -> str:
+def bake(selected_objects, texture_image, delete_projector: bool) -> str:
     
     bpy.context.active_object.select_set(False)
     
-    projector = create_projector_object(target_object)
+    projectors = create_projector_objects(selected_objects)
+    projector = create_projector_object_from_list(projectors)
     bpy.context.view_layer.objects.active = projector
-    set_projector_position_and_orientation(projector, target_object)
+    set_projector_position_and_orientation(projector, selected_objects[0])
     projector_material = setup_projector_material(texture_image)
     assign_material_to_projector(projector, projector_material)
     bpy.ops.object.mode_set(mode = 'OBJECT')
     project_uvs(projector)
     
-    bake_from_active(projector, target_object)
+    for object in selected_objects:
+        if object.type == 'CAMERA':
+            continue
+        bake_from_active(projector, object)
 
     if delete_projector:
         remove_projector(projector)
+        
+    for object in selected_objects:
+        object.select_set(True)
 
 def execute():
     props = bpy.context.scene.sd_link_properties
@@ -68,11 +75,9 @@ def execute():
     if isinstance(texture_image, str):
         return texture_image # Error message
     
-    obj = None
+    selected_objects = None
     if props.bake_texture:
-        obj = bpy.context.selected_objects[0]
-        if obj.type == 'CAMERA':
-            return "Cannot generate texture for camera. Please select an object."
-        return bake(obj, texture_image=texture_image, delete_projector=props.delete_projector)
+        selected_objects = bpy.context.selected_objects
+        return bake(selected_objects, texture_image=texture_image, delete_projector=props.delete_projector)
     return ''
 
