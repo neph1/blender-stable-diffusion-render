@@ -26,7 +26,7 @@ class ComfyUi(ImageGeneratorBase):
         return image_data
 
 
-    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, cn_start: float, cn_end: float, scheduler: str = '', model: str = '') -> bytes:
+    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '', cn_start: float = 1.0, cn_end: float = 1.0) -> bytes:
 
         path = self._load_workflow(self.workflow)
         with open(path) as f:
