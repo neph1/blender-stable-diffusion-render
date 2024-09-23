@@ -3,7 +3,7 @@ import bpy
 
 def create_projector_objects(obj_list):
     """Create projector objects for each object in the list"""
-    projectors = []
+    projectors = dict()
     for obj in obj_list:
         obj_data = obj.data.copy()
         projector = bpy.data.objects.new(name=f"TextureProjector_{obj.name}", object_data=obj_data)
@@ -11,12 +11,13 @@ def create_projector_objects(obj_list):
             projector.data.uv_layers.remove(projector.data.uv_layers[0])
         projector.data.uv_layers.new(name="bake")
         bpy.context.collection.objects.link(projector)
-        projectors.append(projector)
+        projectors[obj.name] = projector
     
     return projectors
 
 def create_projector_object_from_list(obj_list):
     bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.active_object.select_set(False)
     bpy.context.view_layer.objects.active = obj_list[0]
     for obj in obj_list:
         if obj.type == 'MESH':
@@ -48,6 +49,7 @@ def set_projector_position_and_orientation(projector, target_object):
     projector.rotation_euler = target_object.rotation_euler
 
 def bake_from_active(projector, target_object):
+    bpy.ops.object.select_all(action='DESELECT')
     bpy.context.active_object.select_set(False)
     projector.select_set(True)
     bpy.context.view_layer.objects.active = target_object
@@ -55,6 +57,8 @@ def bake_from_active(projector, target_object):
     bpy.context.scene.render.bake.use_selected_to_active = True
     print("Baking to object", target_object.name)
     bpy.ops.object.bake(type='COMBINED', use_clear=True, cage_extrusion=0.1)
+    projector.select_set(False)
+    target_object.select_set(False)
     
 def remove_projector(projector):
     bpy.data.materials.remove(projector.data.materials[0])
