@@ -12,18 +12,17 @@ def render_viewport(width, height, path):
     bpy.data.images["Viewer Node"].save_render(outputPath)
     return bpy.data.images["Viewer Node"]
 
-
 def project_uvs(projector):
     view_params = save_viewport_position()
+    bpy.ops.object.select_all(action='DESELECT')
     bpy.context.active_object.select_set(False)
-    #bpy.context.view_layer.objects.active = projector
+    bpy.context.view_layer.objects.active = projector
     bpy.ops.object.mode_set(mode = 'EDIT')
     for area in bpy.context.screen.areas:
         if area.type == 'VIEW_3D':
             for region in area.regions:
                 if region.type == 'WINDOW':
                     with bpy.context.temp_override(area=area, region=region, edit_object=projector):
-                        print("Projecting UVs for " + projector.name)
                         bpy.ops.view3d.view_camera()
                         bpy.ops.uv.project_from_view()
     bpy.ops.object.mode_set(mode = 'OBJECT')
