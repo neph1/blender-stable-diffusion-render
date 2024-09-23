@@ -47,25 +47,23 @@ def bake(selected_objects, texture_image, delete_projector: bool) -> str:
     bpy.context.active_object.select_set(False)
     
     projectors = create_projector_objects(selected_objects)
-    projector = create_projector_object_from_list(projectors)
-    
-    bpy.context.view_layer.objects.active = projector
-    #set_projector_position_and_orientation(projector, selected_objects[0])
-    projector_material = setup_projector_material(texture_image)
-    assign_material_to_projector(projector, projector_material)
-    bpy.ops.object.mode_set(mode = 'OBJECT')
-    project_uvs(projector)
-
-
+    # projector = create_projector_object_from_list(projectors)
     for object in selected_objects:
 
         if object.type == 'CAMERA':
             continue
+        projector = projectors[object.name]
+        bpy.context.view_layer.objects.active = projector
+        set_projector_position_and_orientation(projector, object)
+        projector_material = setup_projector_material(texture_image)
+        assign_material_to_projector(projector, projector_material)
+        bpy.ops.object.mode_set(mode = 'OBJECT')
+        project_uvs(projector)
     
         bake_from_active(projector, object)
 
-    if delete_projector:
-        remove_projector(projector)
+        if delete_projector:
+            remove_projector(projector)
         
     for object in selected_objects:
         object.select_set(True)
