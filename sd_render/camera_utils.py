@@ -14,6 +14,7 @@ def render_viewport(width, height, path):
 
 
 def project_uvs(projector):
+def project_uvs(projector):
     view_params = save_viewport_position()
     bpy.ops.object.select_all(action='DESELECT')
     bpy.context.active_object.select_set(False)
@@ -27,6 +28,7 @@ def project_uvs(projector):
                         bpy.ops.view3d.view_camera()
                         bpy.ops.uv.project_from_view()
     bpy.ops.object.mode_set(mode = 'OBJECT')
+    bpy.context.active_object.select_set(False)
     apply_viewport_position(view_params)
 
 def project_uv_from_active_camera(obj):
