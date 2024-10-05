@@ -155,6 +155,16 @@ class StableDiffusionProperties(PropertyGroup):
         description="Bake the generated image to the selected object",
         default=True
     )
+    return_image: BoolProperty(
+        name="Return image to Blender",
+        description="Whether to process the image in Blender",
+        default=True
+    )
+    output_image_name: StringProperty(
+        name="Output image name",
+        description="Name of the image to save",
+        default="sd_output.png"
+    )
 
 class Automatic1111Properties(StableDiffusionProperties):
     auto1111_samplers = [
@@ -302,6 +312,8 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.prop(generate_image_properties, "sd_port")
     layout.separator()
     layout.label(text="Baking settings")
+    layout.prop(generate_image_properties, "output_image_name", text="Output image")
+    layout.prop(generate_image_properties, "return_image")
     layout.prop(generate_image_properties, "delete_projector")
     layout.prop(generate_image_properties, "bake_texture")
 

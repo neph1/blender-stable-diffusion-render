@@ -16,9 +16,6 @@ class Automatic1111(ImageGeneratorBase):
         if model:
             self.set_model(model)
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance)
-        if not image_data:
-            return None
-        self.convert_image(image_data, "sd_output")
         return image_data
 
 

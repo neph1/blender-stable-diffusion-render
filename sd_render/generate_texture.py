@@ -3,7 +3,7 @@ import logging
 from sd_render.image_gen.comfy_ui import ComfyUi
 from sd_render.image_gen.automatic1111 import Automatic1111
 from sd_render.camera_utils import render_viewport, project_uvs
-from sd_render.image_utils import bake_from_active, create_projector_objects, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector, create_projector_object_from_list
+from sd_render.image_utils import bake_from_active, create_projector_objects, set_projector_position_and_orientation, setup_projector_material, assign_material_to_projector, remove_projector
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -23,7 +23,7 @@ def render(props):
         return "Invalid backend selected."
     depth_map = f'{output_folder}/viewer_node.png'
     #generated_path = "/tmp/sd_output.png"
-    generated_path = generator.generate_image(prompt=props.prompt,
+    image_data = generator.generate_image(prompt=props.prompt,
                                              negative_prompt=props.negative_prompt,
                                              seed=props.seed,
                                              sampler=props.sampler,
@@ -36,10 +36,12 @@ def render(props):
                                              depth_map=depth_map,
                                              scheduler=scheduler,
                                              model=props.model)
-    try:
-        return bpy.data.images.load(f'{output_folder}/sd_output.png')
-    except:
-        return "Failed to generate texture."
+    if props.return_image:
+        generator.convert_image(image_data, props.output_image_name)
+        try:
+            return bpy.data.images.load(f'{output_folder}/{props.output_image_name}')
+        except:
+            return "Failed to generate texture."
 
 
 def bake(selected_objects, texture_image, delete_projector: bool) -> str:
@@ -78,7 +80,7 @@ def execute():
         return texture_image # Error message
     
     selected_objects = None
-    if props.bake_texture:
+    if props.bake_texture and props.return_image:
         selected_objects = bpy.context.selected_objects
         return bake(selected_objects, texture_image=texture_image, delete_projector=props.delete_projector)
     return ''
