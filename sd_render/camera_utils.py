@@ -27,20 +27,8 @@ def project_uvs(projector):
                         bpy.ops.uv.project_from_view()
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.context.active_object.select_set(False)
+    bpy.ops.object.select_all(action='DESELECT')
     apply_viewport_position(view_params)
-
-def project_uv_from_active_camera(obj):
-    active_camera = bpy.context.scene.camera
-    
-    if active_camera is None:
-        print("No active camera found.")
-        return
-    
-    bpy.context.view_layer.objects.active = obj
-    bpy.context.scene.tool_settings.uv_texture_add_operator_projector = active_camera
-    
-    with bpy.context.temp_override(edit_object=bpy.context.edit_object):
-        bpy.ops.uv.project_from_view(correct_aspect=True, camera_bounds=True)
 
 """ 
 Source:

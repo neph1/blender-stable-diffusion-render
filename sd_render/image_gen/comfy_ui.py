@@ -22,8 +22,7 @@ class ComfyUi(ImageGeneratorBase):
         image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model, cn_start, cn_end)
         if not image_data:
             return None
-        self.convert_image(image_data[0], "sd_output")
-        return image_data
+        return image_data[0]
 
 
     def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '', cn_start: float = 1.0, cn_end: float = 1.0) -> bytes:
