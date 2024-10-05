@@ -35,7 +35,10 @@ def render(props):
                                              cn_guidance=props.cn_guidance,
                                              depth_map=depth_map,
                                              scheduler=scheduler,
-                                             model=props.model)
+                                             model=props.model,
+                                             cn_start=props.cn_start,
+                                             cn_end=props.cn_end,
+                                             number_batches=props.number_batches)
     if props.return_image:
         generator.convert_image(image_data, props.output_image_name)
         try:
