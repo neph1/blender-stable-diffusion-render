@@ -58,3 +58,9 @@ This happens in the addon preferences
 ![Screenshot from 2024-02-18 14-51-16](https://github.com/neph1/blender-stable-diffusion-render/assets/7988802/a28c80e8-a782-4372-b892-1c0b140bba1a)
 
 After switching, you need to restart for the configuration properties to update
+
+
+If you have no use for the rendered image in Blender and just want to create a scene for stable diffusion, you can uncheck the button that returns the image. That way you won't have unnecessary image instances in Blender.
+
+![Screenshot from 2024-10-05 10-58-45](https://github.com/user-attachments/assets/66810548-f6a5-4976-bd16-74fe6dee389e)
+
