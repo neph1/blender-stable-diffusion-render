@@ -17,15 +17,15 @@ class ComfyUi(ImageGeneratorBase):
         super().__init__("/prompt", output_folder, address, port)
         self.workflow = workflow
 
-    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '', cn_start: float = 0.0, cn_end: float = 1.0) -> str:
+    def generate_image(self, prompt: str, depth_map: str, negative_prompt: str = "text, watermark", seed: int = -1, sampler: str = "euler", steps: int = 30, cfg_scale: float = 7, width: int = 512, height: int = 512, cn_weight: float = 0.7, cn_guidance: float = 1, scheduler: str = '', model: str = '', cn_start: float = 0.0, cn_end: float = 1.0, number_batches: int = 1) -> str:
         """Generate an image from text."""
-        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model, cn_start, cn_end)
+        image_data = self.send_request(prompt, depth_map, negative_prompt, seed, sampler, steps, cfg_scale, width, height, cn_weight, cn_guidance, scheduler, model, cn_start, cn_end, number_batches)
         if not image_data:
             return None
         return image_data[0]
 
 
-    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '', cn_start: float = 1.0, cn_end: float = 1.0) -> bytes:
+    def send_request(self, prompt, depth_map, negative_prompt: str, seed: int, sampler: str, steps: int, cfg_scale: int, width: int, height: int, cn_weight: float, cn_guidance: float, scheduler: str = '', model: str = '', cn_start: float = 1.0, cn_end: float = 1.0, number_batches: int = 1) -> bytes:
 
         path = self._load_workflow(self.workflow)
         with open(path) as f:
@@ -44,7 +44,7 @@ class ComfyUi(ImageGeneratorBase):
         workflow = self._set_text_prompts(workflow, prompt, negative_prompt)
 
         workflow = self._set_sampler(workflow, sampler, cfg_scale, seed, steps, scheduler)
-        workflow = self._set_image_size(workflow, width, height)
+        workflow = self._set_image_size(workflow, width, height, number_batches)
 
         p = {"prompt": workflow}
         data = json.dumps(p)
@@ -126,9 +126,10 @@ class ComfyUi(ImageGeneratorBase):
             data["3"]["inputs"]["scheduler"] = scheduler
         return data
     
-    def _set_image_size(self, data: dict, width: int = 512, height: int = 512) -> dict:
+    def _set_image_size(self, data: dict, width: int = 512, height: int = 512, batch_size: int = 1) -> dict:
         data["5"]["inputs"]["width"] = width
         data["5"]["inputs"]["height"] = height
+        data["5"]["inputs"]["batch_size"] = batch_size
         return data
     
     def _set_control_net(self, data:dict, depth_map: str, weight: float, guidance: float, start: float, end: float) -> dict:

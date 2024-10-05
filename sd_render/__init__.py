@@ -150,6 +150,11 @@ class StableDiffusionProperties(PropertyGroup):
         description="Height of the reference image (depth map)",
         default=512
     )
+    number_batches: IntProperty(
+        name="Batch size",
+        description="How many images to render in a batch",
+        default=1
+    )
     bake_texture: BoolProperty(
         name="Bake texture to object",
         description="Bake the generated image to the selected object",
@@ -306,6 +311,7 @@ def draw_generation_settings(layout, generate_image_properties):
     layout.prop(generate_image_properties, "cn_end")
     layout.prop(generate_image_properties, "ref_image_width")
     layout.prop(generate_image_properties, "ref_image_height")
+    layout.prop(generate_image_properties, "number_batches")
     layout.separator()
     layout.label(text="Backend settings")
     layout.prop(generate_image_properties, "sd_address")
